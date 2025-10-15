@@ -16,18 +16,17 @@ jobs:
       - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
-      # 🧰 Step 2: Setup Node.js
-      - name: ⚙️ Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      # 🧰 Step 2: Setup Bun
+      - name: ⚙️ Setup Bun Runtime
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 24
-          cache: "npm"
+           bun-version: latest
 
       # 🧩 Step 3: Install dependencies
       - name: 📥 Install dependencies
         run: |
           echo "🚀 Installing dependencies..."
-          npm ci
+          bun ci
           echo "✅ Dependencies installed!"
 
       # 🧠 Step 4: Run ESLint
@@ -35,7 +34,7 @@ jobs:
         if: success()
         run: |
           echo "::group::🔍 Running ESLint..."
-          npm run lint || exit 1
+          bun run lint || exit 1
           echo "::endgroup::"
           echo "✨ ESLint check complete!"
 
