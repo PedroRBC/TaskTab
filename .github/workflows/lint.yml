@@ -1,0 +1,49 @@
+name: 🧹 Lint & Quality Check
+
+on:
+  push:
+    branches: ["main", "dev", "feature/*"]
+  pull_request:
+    branches: ["main", "dev"]
+
+jobs:
+  lint:
+    name: 🔍 Code Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      # 🧱 Step 1: Checkout code
+      - name: 📦 Checkout repository
+        uses: actions/checkout@v4
+
+      # 🧰 Step 2: Setup Node.js
+      - name: ⚙️ Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      # 🧩 Step 3: Install dependencies
+      - name: 📥 Install dependencies
+        run: |
+          echo "🚀 Installing dependencies..."
+          npm ci
+          echo "✅ Dependencies installed!"
+
+      # 🧠 Step 4: Run ESLint
+      - name: 🧹 Run ESLint
+        if: success()
+        run: |
+          echo "::group::🔍 Running ESLint..."
+          npm run lint || exit 1
+          echo "::endgroup::"
+          echo "✨ ESLint check complete!"
+
+      # 🎉 Step 5: Final summary
+      - name: 🏁 Lint complete
+        if: success()
+        run: echo "✅ All checks passed!"
+
+      - name: ❌ Lint failed
+        if: failure()
+        run: echo "❌ Lint or formatting failed! Please fix issues before merging."
